@@ -2,13 +2,13 @@
 
 ## Scope and overview
 
-Add an auto-search field to the Task Manager UI. As the user types, the UI filters the tasks already loaded from `GET /api/tasks` and immediately shows only tasks whose title or description contains the search term. Clearing the field restores the full loaded list.
+Add an auto-search field to the Task Manager UI. As the user types, the UI filters the tasks already loaded from `GET /api/tasks` and immediately shows only tasks whose title contains the search term. Clearing the field restores the full loaded list.
 
 ## Assumptions
 
 - Search is performed client-side on the currently loaded task set; it does not fetch more tasks.
 - Matching is a case-insensitive substring match. Search text is used as entered; leading and trailing whitespace are not removed.
-- A task matches if its title or description contains the search term. If a task has no description, its title alone is searched.
+- A task matches if its title contains the search term.
 - An empty search term matches every currently loaded task.
 - No accessibility standard or quantitative response-time target was supplied; the search field will have an accessible label and update without an intentional delay.
 
@@ -16,7 +16,7 @@ Add an auto-search field to the Task Manager UI. As the user types, the UI filte
 
 - **FR-1:** The UI shall provide a task search field alongside the loaded tasks list.
 - **FR-2:** On each search-field change, the UI shall immediately filter the currently loaded tasks without waiting for a submit action.
-- **FR-3:** A task shall match when its title or description contains the entered search term, using case-insensitive substring matching.
+- **FR-3:** A task shall match when its title contains the entered search term, using case-insensitive substring matching.
 - **FR-4:** The UI shall show only matching tasks while the search term is non-empty. If no tasks match, the task list shall contain no task rows and shall not show a separate no-results message.
 - **FR-5:** When the search field is cleared, the UI shall show all tasks from the currently loaded task set again.
 - **FR-6:** Filtering shall not alter task data or issue an additional API request.
@@ -42,20 +42,14 @@ Add an auto-search field to the Task Manager UI. As the user types, the UI filte
 **When** the user searches for “BOOK”  
 **Then** “Book flights” is shown.
 
-### AC-3: Match task descriptions
-
-**Given** a loaded task's description contains the search term but its title does not  
-**When** the user enters that term  
-**Then** the task is shown.
-
-### AC-4: Show an empty list when there are no matches
+### AC-3: Show an empty list when there are no matches
 
 **Given** tasks are loaded  
-**When** the user enters a term that appears in no task title or description  
+**When** the user enters a term that appears in no task title  
 **Then** no task rows are shown  
 **And** no separate no-results message is shown.
 
-### AC-5: Clear the search
+### AC-4: Clear the search
 
 **Given** the search field has filtered the three tasks from AC-1  
 **When** the user clears the search field  
@@ -66,7 +60,8 @@ Add an auto-search field to the Task Manager UI. As the user types, the UI filte
 - Server-side, database, or API search and changes to `GET /api/tasks`.
 - Loading tasks beyond the set already loaded in the UI.
 - Changing, sorting, or otherwise modifying task data as a result of searching.
-- Search by fields other than task title and description.
+- Search by fields other than task title.
+- Description storage, description API fields, and description-based matching.
 
 ## Source
 
