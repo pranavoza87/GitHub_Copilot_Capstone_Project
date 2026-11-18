@@ -160,11 +160,28 @@ function TaskItem({ task, onSaved, onDelete }) {
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState('');
+  const [hasLoadedTasks, setHasLoadedTasks] = useState(false);
+
+  const normalizedQuery = searchQuery.toLowerCase();
+  const visibleTasks = tasks.filter((task) => {
+    if (!task || typeof task !== 'object' || task.id == null || typeof task.title !== 'string') {
+      return false;
+    }
+    return task.title.toLowerCase().includes(normalizedQuery);
+  });
 
   const load = () =>
     getTasks()
-      .then(setTasks)
+      .then((loadedTasks) => {
+        if (!Array.isArray(loadedTasks)) {
+          throw new Error('Invalid task list response');
+        }
+        setTasks(loadedTasks);
+        setHasLoadedTasks(true);
+        setError('');
+      })
       .catch((e) => setError(e.message));
 
   useEffect(() => {
@@ -209,14 +226,24 @@ export default function App() {
         <button type="submit">Add</button>
       </form>
 
+      <div className="search-form">
+        <label htmlFor="task-search">Search tasks by title</label>
+        <input
+          id="task-search"
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       {error && <p className="error">{error}</p>}
 
       <ul className="task-list">
-        {tasks.map((t) => (
+        {visibleTasks.map((t) => (
           <TaskItem key={t.id} task={t} onSaved={load} onDelete={handleDelete} />
         ))}
       </ul>
-      {tasks.length === 0 && <p className="empty">No tasks yet.</p>}
+      {hasLoadedTasks && tasks.length === 0 && <p className="empty">No tasks yet.</p>}
     </main>
   );
 }
