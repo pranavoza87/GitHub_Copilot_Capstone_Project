@@ -101,3 +101,46 @@ test('reports an invalid task collection response through the existing error UI'
   await expect(page.getByText('Invalid task list response')).toBeVisible();
   await expect(page.getByText('No tasks yet.')).toHaveCount(0);
 });
+
+test('preserves loaded source order when multiple titles match', async ({ page }) => {
+  await mockTasks(page, [
+    { id: 1, title: 'Plan flight routes', status: 'todo' },
+    { id: 2, title: 'Book flights', status: 'todo' },
+    { id: 3, title: 'Pay invoices', status: 'todo' },
+  ]);
+  await page.goto('/');
+
+  await page.getByRole('searchbox', { name: 'Search tasks by title' }).fill('flight');
+
+  expect(await visibleTitles(page)).toEqual(['Plan flight routes', 'Book flights']);
+});
+
+test('continues applying the active query after adding and reloading tasks', async ({ page }) => {
+  let loadedTasks = [
+    { id: 1, title: 'Book flights', status: 'todo' },
+    { id: 2, title: 'Pay invoices', status: 'todo' },
+  ];
+
+  await page.route('**/api/tasks', async (route) => {
+    if (route.request().method() === 'POST') {
+      const body = route.request().postDataJSON();
+      loadedTasks = [
+        ...loadedTasks,
+        { id: 3, title: body.title, status: 'todo' },
+      ];
+      await route.fulfill({ json: loadedTasks[loadedTasks.length - 1] });
+      return;
+    }
+    await route.fulfill({ json: loadedTasks });
+  });
+
+  await page.goto('/');
+  await page.getByRole('searchbox', { name: 'Search tasks by title' }).fill('flight');
+  await expect(page.locator('.task-list li')).toHaveCount(1);
+
+  await page.getByPlaceholder('New task title').fill('Plan flight routes');
+  await page.getByRole('button', { name: 'Add' }).click();
+
+  await expect(page.locator('.task-list li')).toHaveCount(2);
+  expect(await visibleTitles(page)).toEqual(['Book flights', 'Plan flight routes']);
+});
