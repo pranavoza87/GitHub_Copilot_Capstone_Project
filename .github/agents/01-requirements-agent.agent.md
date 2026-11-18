@@ -19,6 +19,7 @@ Follow the `01-requirements-clarifier` skill for the full procedure, clarificati
 
 - Ask your clarifying questions.
 - If no response is received after asking, proceed on clearly documented assumptions rather than blocking indefinitely (per the skill), but call out every assumption explicitly in the document and in your summary.
+- When asking for final approval of `requirements.md`, ask **only ONE single question** (e.g., Approve / Proceed without changes / Request changes). **Do NOT bundle** a second follow-up question asking for requested changes in the same prompt. Only ask what should be revised in a separate follow-up turn if the user explicitly selects "Request changes".
 - Do not mark this phase as complete until you have presented `requirements.md` to the user and either received approval or been explicitly told to proceed.
 
 ## Output
