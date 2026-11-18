@@ -108,7 +108,10 @@ curl -X PATCH localhost:4000/api/tasks/1 -H "Content-Type: application/json" -d 
 ## Testing
 
 ```bash
+npm run build             # Vite production build
 npm test --prefix backend   # node:test integration tests, temporary SQLite file, no extra dependencies
+npx playwright install chromium  # one-time browser setup
+npm run test:search        # Playwright task-search acceptance tests
 ```
 
 ## Troubleshooting

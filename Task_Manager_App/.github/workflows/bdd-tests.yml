@@ -1,4 +1,4 @@
-name: BDD tests
+name: Task Manager tests
 
 on:
   pull_request:
@@ -8,14 +8,14 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: bdd-tests-${{ github.ref }}
+  group: task-manager-tests-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  bdd:
+  test:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -39,8 +39,14 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run BDD tests
-        run: npm run test:bdd
+      - name: Build frontend
+        run: npm run build
+
+      - name: Run backend tests
+        run: npm test --prefix backend
+
+      - name: Run browser tests
+        run: npm run test:search
 
       - name: Upload test reports
         if: ${{ !cancelled() }}
@@ -48,9 +54,7 @@ jobs:
         with:
           name: bdd-test-reports
           path: |
-            tests/Test Execution & Reporting/html-report
-            tests/Test Execution & Reporting/junit.xml
-            tests/Test Execution & Reporting/results.json
-            tests/Test Execution & Reporting/test-results
+            test-results
+            playwright-report
           if-no-files-found: warn
           retention-days: 14
