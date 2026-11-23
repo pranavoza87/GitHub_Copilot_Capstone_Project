@@ -21,6 +21,19 @@ body {
   padding: 0.5rem;
 }
 
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.search-form input {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  width: 100%;
+}
+
 .task-list {
   list-style: none;
   padding: 0;

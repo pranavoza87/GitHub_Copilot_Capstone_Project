@@ -12,6 +12,7 @@
     "start": "npm start --prefix backend",
     "test:bdd:gen": "bddgen",
     "test:bdd": "bddgen && playwright test",
+    "test:search": "playwright test",
     "test:bdd:report": "playwright show-report \"tests/Test Execution & Reporting/html-report\""
   },
   "devDependencies": {
